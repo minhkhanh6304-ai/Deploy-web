@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nguyen Minh Khanh | UA Marketing Portfolio</title>
+  <meta name="description" content="Multi-page personal portfolio of Nguyen Minh Khanh, UA Marketing fresher at FTU Hanoi.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&family=Nunito:wght@400;500;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky: #C9E8F5;
+      --sky-deep: #7BBFDA;
+      --pink: #F2B8C2;
+      --pink-light: #FAD9E0;
+      --pink-dark: #E8839A;
+      --green: #A8D5A2;
+      --green-deep: #5BA05A;
+      --white: #FFFFFF;
+      --cream: #FAFDF8;
+      --charcoal: #2C2C2C;
+      --gray: #7A7A7A;
+      --gold: #D4A853;
+      --container: 1100px;
+      --radius: 16px;
+      --pill: 999px;
+      --transition-fast: 150ms ease;
+      --transition-med: 220ms ease;
+      --shadow-soft: 0 10px 24px rgba(44, 44, 44, 0.1);
+      --glass-bg: rgba(255, 255, 255, 0.62);
+      --glass-border: rgba(255, 255, 255, 0.45);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--cream), #f4fbff);
+      color: var(--charcoal);
+      font-family: "Nunito", sans-serif;
+      line-height: 1.6;
+      cursor: none;
+      overflow-x: hidden;
+    }
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1000;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-dot { width: 8px; height: 8px; background: var(--pink-dark); border-radius: 50%; }
+    .cursor-ring {
+      width: 30px; height: 30px; border: 1px solid rgba(232, 131, 154, 0.4);
+      border-radius: 50%; transition: width .2s ease, height .2s ease, border-color .2s ease;
+    }
+    h1, h2, h3, h4, .logo { font-family: "Cormorant Garamond", serif; margin: 0 0 14px; line-height: 1.2; }
+    p { margin: 0 0 14px; color: var(--gray); font-size: 1.02rem; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(var(--container), 92%); margin: 0 auto; }
+    .section { padding: 80px 0; position: relative; }
+
+    .site-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+      transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+      border-bottom: 1px solid transparent;
+    }
+    .site-nav.scrolled { background: rgba(255, 255, 255, .8); border-bottom-color: rgba(122, 122, 122, .2); backdrop-filter: blur(10px); }
+    .nav-wrap { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; min-height: 64px; }
+    .logo { font-style: italic; color: var(--pink-dark); font-size: 1.75rem; }
+    .nav-links { display: flex; gap: 18px; color: var(--gray); font-family: "Outfit", sans-serif; }
+    .nav-link { position: relative; font-size: 14px; letter-spacing: .03em; transition: color var(--transition-fast); padding: 8px 4px; }
+    .nav-link::after {
+      content: ""; position: absolute; left: 0; bottom: -2px; width: 100%; height: 2px;
+      background: var(--pink-dark); transform: scaleX(0); transform-origin: left; transition: transform var(--transition-med);
+    }
+    .nav-link:hover, .nav-link[aria-current="page"] { color: var(--pink-dark); }
+    .nav-link:hover::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); }
+    .nav-link[aria-current="page"]::before {
+      content: ""; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--pink-dark);
+      left: 50%; transform: translateX(-50%); bottom: -8px;
+    }
+    .hamburger { display: none; border: 0; background: transparent; width: 44px; height: 44px; padding: 0; cursor: pointer; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--charcoal); margin: 5px auto; }
+    .mobile-menu {
+      position: fixed; inset: 0; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px);
+      display: grid; place-items: center; opacity: 0; pointer-events: none; transition: opacity var(--transition-med); z-index: 98;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: auto; }
+    .mobile-menu nav { display: grid; gap: 18px; text-align: center; font-family: "Outfit", sans-serif; font-size: 1.2rem; }
+    .mobile-link { padding: 10px 16px; border-radius: var(--pill); }
+    .mobile-link:hover { background: rgba(242, 184, 194, 0.25); }
+    main { padding-top: 74px; }
+
+    .page { display: none; opacity: 0; transform: translateY(10px); }
+    .page.active { display: block; }
+    .page.entering { animation: pageIn 200ms ease-in forwards; }
+    .page.exiting { animation: pageOut 150ms ease-out forwards; }
+    .display-heading { font-size: clamp(3rem, 8vw, 5rem); font-style: italic; color: var(--charcoal); }
+    .section-heading { font-size: clamp(2.4rem, 6vw, 3.5rem); margin-bottom: 12px; color: var(--charcoal); }
+    .label {
+      font-family: "Outfit", sans-serif; text-transform: uppercase; letter-spacing: .3em; font-size: .82rem;
+      color: var(--pink-dark); margin-bottom: 14px;
+    }
+    .center { text-align: center; }
+    .glass {
+      background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px); border-radius: var(--radius); box-shadow: var(--shadow-soft);
+    }
+
+    .home-hero {
+      min-height: calc(100vh - 74px); display: grid; place-items: center; text-align: center; position: relative; overflow: hidden;
+      background: radial-gradient(circle at 12% 20%, rgba(201, 232, 245, 0.8), transparent 40%), radial-gradient(circle at 82% 12%, rgba(250, 217, 224, 0.8), transparent 38%), linear-gradient(160deg, #f9feff, var(--cream));
+    }
+    .home-hero .container { position: relative; z-index: 2; }
+    .subtitle { font-family: "Outfit", sans-serif; font-size: .95rem; letter-spacing: .3em; color: var(--pink-dark); margin-bottom: 26px; }
+    .cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 42px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 11px 24px; border-radius: var(--pill);
+      border: 1px solid transparent; font-family: "Outfit", sans-serif; font-weight: 600; transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      cursor: pointer;
+    }
+    .btn:hover { transform: scale(1.03); box-shadow: 0 10px 26px rgba(44, 44, 44, 0.14); }
+    .btn-primary { background: var(--pink-dark); color: var(--white); }
+    .btn-outline { color: var(--sky-deep); border-color: var(--sky-deep); background: transparent; }
+
+    .floating-blob { position: absolute; border-radius: 50%; filter: blur(1px); animation: drift 20s infinite alternate ease-in-out; z-index: 1; }
+    .blob-a { width: 280px; height: 240px; background: rgba(201, 232, 245, 0.9); left: -70px; top: 16%; }
+    .blob-b { width: 230px; height: 230px; background: rgba(242, 184, 194, 0.55); right: 8%; top: 8%; animation-delay: 1.6s; }
+    .blob-c { width: 310px; height: 220px; background: rgba(168, 213, 162, 0.35); right: -80px; bottom: 12%; animation-delay: 2.5s; }
+    .bokeh-dot { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.7); animation: floatDot linear infinite; }
+    .b1 { width: 18px; height: 18px; left: 20%; top: 25%; animation-duration: 11s; }
+    .b2 { width: 10px; height: 10px; left: 71%; top: 40%; animation-duration: 8s; }
+    .b3 { width: 14px; height: 14px; left: 52%; top: 78%; animation-duration: 15s; }
+    .b4 { width: 8px; height: 8px; left: 35%; top: 62%; animation-duration: 13s; }
+    .leaf { position: absolute; width: 38px; height: 18px; background: rgba(91, 160, 90, 0.2); border-radius: 50% 0 50% 0; transform: rotate(-22deg); z-index: 1; }
+    .leaf.l1 { left: 14%; bottom: 28%; }
+    .leaf.l2 { right: 17%; bottom: 22%; transform: rotate(15deg); }
+    .stats-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 920px; margin: 0 auto; }
+    .mini-stat { padding: 14px; font-family: "Outfit", sans-serif; font-size: .95rem; animation: fadeUp .7s both; animation-delay: var(--dly); }
+
+    .two-col { display: grid; grid-template-columns: 1.2fr .8fr; gap: 32px; align-items: center; }
+    .about-avatar-wrap { position: relative; min-height: 420px; display: grid; place-items: center; }
+    .avatar { width: min(320px, 82%); aspect-ratio: 1/1; border-radius: 50%; padding: 8px; background: linear-gradient(135deg, var(--pink-dark), var(--sky-deep)); box-shadow: 0 14px 28px rgba(44, 44, 44, 0.12); }
+    .avatar-inner {
+      width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #ffffff, #ecf9ff);
+      font-family: "Cormorant Garamond", serif; font-size: 3rem; color: var(--pink-dark); font-style: italic; border: 8px solid rgba(255, 255, 255, 0.85);
+    }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; justify-content: center; }
+    .pill { padding: 8px 12px; border-radius: var(--pill); font-family: "Outfit", sans-serif; font-size: .84rem; background: rgba(250, 217, 224, 0.9); color: #8f4f5d; }
+    .callout {
+      position: absolute; width: 130px; font-family: "Outfit", sans-serif; font-size: .78rem; color: var(--green-deep); text-align: center;
+      border-top: 2px dashed rgba(123, 191, 218, 0.8); padding-top: 6px;
+    }
+    .callout::after { content: ""; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--pink-dark); right: 2px; top: -5px; }
+    .c1 { top: 24px; left: 10px; transform: rotate(-18deg); }
+    .c2 { top: 24px; right: 0; transform: rotate(15deg); }
+    .c3 { bottom: 38px; left: 0; transform: rotate(12deg); }
+    .c4 { bottom: 36px; right: 8px; transform: rotate(-14deg); }
+    .edu-card { padding: 18px; margin-top: 18px; }
+
+    .timeline-wrap { max-width: 800px; margin: 0 auto; }
+    .timeline-group-label {
+      margin: 24px 0 12px; font-family: "Outfit", sans-serif; letter-spacing: .16em; color: var(--gray);
+      text-transform: uppercase; font-size: .8rem; text-align: center;
+    }
+    .timeline { position: relative; padding-left: 32px; display: grid; gap: 18px; }
+    .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--pink-dark), var(--sky-deep)); }
+    .timeline-item { position: relative; padding-left: 8px; }
+    .dot {
+      position: absolute; width: 14px; height: 14px; border-radius: 50%; left: -29px; top: 26px; box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.66);
+      transform: scale(0); animation: dotPop 600ms cubic-bezier(0.18, 1.35, 0.4, 1) forwards;
+    }
+    .dot.pink { background: var(--pink-dark); }
+    .dot.sky { background: var(--sky-deep); }
+    .dot.green { background: var(--green-deep); }
+    .exp-card { padding: 18px; border-left: 4px solid var(--pink-light); transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+    .exp-card:hover, .tool-card:hover, .achievement-card:hover, .goal-card:hover, .contact-card:hover { transform: translateY(-6px); box-shadow: 0 16px 34px rgba(44, 44, 44, 0.16); }
+    .exp-meta { color: var(--gray); font-family: "Outfit", sans-serif; font-size: .9rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .status-badge { border-radius: var(--pill); padding: 3px 9px; background: rgba(168, 213, 162, 0.28); color: #3f7f3f; font-size: .76rem; font-family: "Outfit", sans-serif; }
+    .exp-content { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
+    .exp-content.open { max-height: 560px; margin-top: 10px; }
+    .toggle-btn { margin-top: 10px; border: 0; padding: 0; background: transparent; font-family: "Outfit", sans-serif; color: var(--pink-dark); font-weight: 600; cursor: pointer; }
+    .exp-card ul { margin: 0; padding-left: 18px; color: var(--gray); }
+
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .skill-item { margin-bottom: 14px; }
+    .skill-label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--charcoal); font-weight: 500; font-family: "Outfit", sans-serif; }
+    .bar { height: 10px; background: rgba(123, 191, 218, 0.2); border-radius: var(--pill); overflow: hidden; }
+    .fill { width: 0; height: 100%; border-radius: var(--pill); background: linear-gradient(90deg, var(--pink-dark), var(--sky-deep)); transition: width .8s ease-out; }
+    .soft-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+    .soft-pill {
+      padding: 9px 14px; border-radius: var(--pill); border: 1px solid rgba(91, 160, 90, 0.45); color: var(--green-deep);
+      font-weight: 500; transition: all var(--transition-med); background: rgba(255, 255, 255, 0.9);
+    }
+    .soft-pill:hover { background: var(--green-deep); color: #fff; }
+    .tools-row { margin-top: 22px; display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+    .tool-card { min-width: 140px; scroll-snap-align: start; padding: 14px 12px; text-align: center; font-family: "Outfit", sans-serif; transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+
+    .achievements-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
+    .achievement-card { padding: 20px; transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast); border: 1px solid rgba(255,255,255,0.4); animation: fadeUp .6s both; animation-delay: var(--ad); }
+    .achievement-card:hover { transform: translateY(-6px) rotate(1deg); border-color: rgba(232, 131, 154, 0.6); box-shadow: 0 15px 30px rgba(232, 131, 154, 0.16); }
+    .achievement-mark { font-size: 2rem; margin-bottom: 6px; }
+    .milestone-strip { position: relative; margin: 30px auto 0; max-width: 780px; height: 46px; }
+    .milestone-strip::before { content: ""; position: absolute; left: 0; right: 0; top: 22px; height: 2px; background: rgba(123, 191, 218, 0.5); }
+    .milestone-progress { position: absolute; left: 0; top: 22px; height: 2px; width: 0; background: linear-gradient(90deg, var(--pink-dark), var(--sky-deep)); transition: width 1.2s ease; }
+    .milestone-strip.run .milestone-progress { width: 100%; }
+    .ms-point { position: absolute; top: 12px; transform: translateX(-50%); text-align: center; font-family: "Outfit", sans-serif; font-size: .76rem; color: var(--gray); }
+    .ms-point span { display: block; width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 6px; background: var(--pink-dark); box-shadow: 0 0 0 5px rgba(232, 131, 154, 0.15); }
+
+    .goals-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 24px; align-items: center; position: relative; }
+    .watermark-ua { font-size: clamp(7rem, 18vw, 12.5rem); font-style: italic; color: rgba(232, 131, 154, 0.08); line-height: .9; position: absolute; z-index: 0; left: 0; top: 16px; pointer-events: none; }
+    .goals-content { position: relative; z-index: 1; }
+    .goal-stack { display: grid; gap: 14px; }
+    .goal-card { padding: 18px; }
+    .goal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .goal-tag { font-family: "Outfit", sans-serif; font-size: .75rem; padding: 6px 10px; border-radius: var(--pill); background: rgba(201, 232, 245, 0.6); color: #3f6f82; }
+    .rocket-wrap { min-height: 420px; position: relative; display: grid; place-items: center; }
+    .rocket-svg { width: min(360px, 90%); filter: drop-shadow(0 10px 18px rgba(44, 44, 44, 0.12)); }
+    .orbit { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: rgba(123, 191, 218, 0.8); animation: orbit 5s linear infinite; }
+    .o1 { top: 35%; left: 20%; } .o2 { top: 20%; right: 22%; animation-duration: 6.8s; } .o3 { bottom: 18%; right: 28%; animation-duration: 7.4s; }
+
+    .contact-page { background: linear-gradient(180deg, rgba(201, 232, 245, 0.35), rgba(250, 253, 248, 0.7)); }
+    .contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 800px; margin: 20px auto 0; }
+    .contact-card { padding: 18px; transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast); border: 1px solid rgba(255,255,255,0.4); min-height: 92px; }
+    .contact-card:hover { border-color: rgba(232, 131, 154, 0.52); box-shadow: 0 12px 24px rgba(232, 131, 154, 0.14); }
+    .contact-ico { font-size: 1.35rem; margin-bottom: 8px; display: block; }
+    .availability {
+      margin: 20px auto 12px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--pill);
+      font-family: "Outfit", sans-serif; background: rgba(168, 213, 162, 0.25); color: #366736; border: 1px solid rgba(91, 160, 90, 0.5);
+    }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-deep); animation: pulse 1.8s infinite; }
+    .fade-on-enter { opacity: 0; transform: translateY(20px); }
+    .fade-on-enter.in { animation: fadeUp .6s ease forwards; }
+    footer {
+      padding: 20px 0 28px; text-align: center; color: var(--gray); font-family: "Outfit", sans-serif;
+      font-size: .9rem; border-top: 1px solid rgba(122, 122, 122, 0.2); background: rgba(255,255,255,0.5);
+    }
+
+    @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pageOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(4px); } }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes drift { 50% { transform: translateY(-20px) translateX(16px); } 100% { transform: translateY(16px) translateX(-10px); } }
+    @keyframes floatDot { 50% { transform: translateY(-20px); opacity: .5; } 100% { transform: translateY(12px); opacity: .9; } }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(91, 160, 90, 0.12); } }
+    @keyframes dotPop { 0% { transform: scale(0); } 72% { transform: scale(1.22); } 100% { transform: scale(1); } }
+    @keyframes orbit { 0% { transform: translate(0, 0); } 25% { transform: translate(8px, -14px); } 50% { transform: translate(16px, 0); } 75% { transform: translate(8px, 14px); } 100% { transform: translate(0, 0); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+      .page { opacity: 1 !important; transform: none !important; }
+    }
+    @media (max-width: 1023px) {
+      .display-heading { font-size: clamp(2.8rem, 7vw, 4rem); }
+      .section-heading { font-size: clamp(2.1rem, 6vw, 3rem); }
+      .two-col, .skills-grid, .goals-grid { grid-template-columns: 1fr; }
+      .about-avatar-wrap { min-height: 360px; }
+    }
+    @media (max-width: 767px) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+      .hamburger { display: block; }
+      .nav-links { display: none; }
+      .section { padding: 48px 0; }
+      .display-heading { font-size: 3rem; }
+      .stats-row { display: flex; overflow-x: auto; padding-bottom: 8px; }
+      .mini-stat { min-width: 240px; flex: 0 0 auto; }
+      .achievements-grid, .contact-grid { grid-template-columns: 1fr; }
+      .timeline { padding-left: 24px; }
+      .dot { left: -21px; }
+      .avatar { width: min(280px, 86%); }
+      .contact-card, .btn, .mobile-link { min-height: 44px; }
+      .watermark-ua { font-size: 6.5rem; position: static; margin-bottom: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <header class="site-nav" id="site-nav">
+    <div class="container nav-wrap">
+      <a href="#home" class="logo nav-link" data-page="home">Khanh.</a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#home" class="nav-link" data-page="home" aria-current="page">Home</a>
+        <a href="#about" class="nav-link" data-page="about">About</a>
+        <a href="#experience" class="nav-link" data-page="experience">Experience</a>
+        <a href="#skills" class="nav-link" data-page="skills">Skills</a>
+        <a href="#achievements" class="nav-link" data-page="achievements">Achievements</a>
+        <a href="#goals" class="nav-link" data-page="goals">Goals</a>
+        <a href="#contact" class="nav-link" data-page="contact">Contact</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <nav>
+      <a href="#home" class="mobile-link" data-page="home">Home</a>
+      <a href="#about" class="mobile-link" data-page="about">About</a>
+      <a href="#experience" class="mobile-link" data-page="experience">Experience</a>
+      <a href="#skills" class="mobile-link" data-page="skills">Skills</a>
+      <a href="#achievements" class="mobile-link" data-page="achievements">Achievements</a>
+      <a href="#goals" class="mobile-link" data-page="goals">Goals</a>
+      <a href="#contact" class="mobile-link" data-page="contact">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="page active" id="page-home">
+      <div class="home-hero section">
+        <div class="floating-blob blob-a"></div><div class="floating-blob blob-b"></div><div class="floating-blob blob-c"></div>
+        <div class="bokeh-dot b1"></div><div class="bokeh-dot b2"></div><div class="bokeh-dot b3"></div><div class="bokeh-dot b4"></div>
+        <div class="leaf l1"></div><div class="leaf l2"></div>
+        <div class="container fade-on-enter in">
+          <h1 class="display-heading">Nguyen Minh Khanh</h1>
+          <p class="subtitle">UA MARKETING · CONTENT CREATOR · FTU 2026</p>
+          <div class="cta-row">
+            <button class="btn btn-primary route-btn" data-page="experience">Explore My Work →</button>
+            <button class="btn btn-outline route-btn" data-page="contact">Get In Touch</button>
+          </div>
+          <div class="stats-row">
+            <article class="mini-stat glass" style="--dly:.1s">26,000+ Followers Managed</article>
+            <article class="mini-stat glass" style="--dly:.2s">10+ Events Organized</article>
+            <article class="mini-stat glass" style="--dly:.3s">3+ Years in Marketing</article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-about">
+      <div class="section">
+        <div class="container two-col">
+          <div class="fade-on-enter">
+            <p class="label">— WHO I AM</p>
+            <h2 class="section-heading">A Storyteller Who Thinks in Data</h2>
+            <p>I'm a final-year International Business Administration student at Foreign Trade University, Hanoi. My passion sits at the intersection of creative content and performance marketing — I love building communities, crafting campaigns that connect, and learning how data drives decisions in UA Marketing.</p>
+            <p>Outside the classroom, I've grown fanpages, led events for 1,000+ students, and scripted TikTok videos. I'm now looking for my first UA Marketing role where I can apply analytical thinking and creative storytelling to grow real products.</p>
+            <article class="edu-card glass"><p><strong>🎓 Foreign Trade University (FTU)</strong><br>2022 – 2026 · International Business Administration</p></article>
+          </div>
+          <div class="about-avatar-wrap fade-on-enter">
+            <div class="callout c1">Creative Thinker</div><div class="callout c2">Data-Driven</div><div class="callout c3">Team Leader</div><div class="callout c4">FTU Researcher</div>
+            <div class="avatar"><div class="avatar-inner">NMK</div></div>
+            <div class="badge-row">
+              <span class="pill">Content Creation</span><span class="pill">Social Media</span><span class="pill">SEO Writing</span><span class="pill">Video Editing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-experience">
+      <div class="section">
+        <div class="container timeline-wrap fade-on-enter">
+          <h2 class="section-heading center">Where I've Grown</h2>
+          <p class="label center">Experience & Activities</p>
+          <p class="timeline-group-label">Experience</p>
+          <div class="timeline">
+            <article class="timeline-item">
+              <span class="dot pink"></span>
+              <div class="exp-card glass">
+                <h3>Media Collaborator</h3><p>Foreign Trade University Student Service Center (FSSC)</p>
+                <div class="exp-meta">06/2024 – Present <span class="status-badge">Current Role</span></div>
+                <button class="toggle-btn" data-target="exp1">Read more ↓</button>
+                <div class="exp-content" id="exp1">
+                  <ul>
+                    <li>Managed & developed FSSC fanpage (26,000+ followers): grew +5,000 followers in 1 year; also managed FTU Career Fair (10,000+) and FTU CareerHub (6,000+) fanpages.</li>
+                    <li>Created written & visual content for major campaigns (FTU Career Fair, FTU Internship Connect, "Tet Sum Vay"): achieving 100–1,000+ engagements per post.</li>
+                    <li>Built TikTok channel CareerHub.vn: scriptwriting, filming, video editing to grow student reach and brand awareness.</li>
+                    <li>Organized large-scale events with 200–2,000 student participants.</li>
+                    <li>Event Leader of "Tet Sum Vay 2025": coordinated volunteers and ran program for 1,000+ attendees.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+            <article class="timeline-item">
+              <span class="dot sky"></span>
+              <div class="exp-card glass">
+                <h3>SEO Content Writer</h3><p>Kashi.com.vn Website</p>
+                <div class="exp-meta">12/2022 – 04/2023</div>
+                <button class="toggle-btn" data-target="exp2">Read more ↓</button>
+                <div class="exp-content" id="exp2">
+                  <ul>
+                    <li>Researched software tools and social media platforms; synthesized user insights for content strategy.</li>
+                    <li>Planned outlines and wrote SEO-optimized articles per brief, ensuring keyword-friendly structure and search engine ranking.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </div>
+          <p class="timeline-group-label">Activity</p>
+          <div class="timeline">
+            <article class="timeline-item">
+              <span class="dot green"></span>
+              <div class="exp-card glass">
+                <h3>Media Executive</h3><p>Young Researchers Club (YRC FTU)</p>
+                <div class="exp-meta">04/2023 – 01/2024</div>
+                <button class="toggle-btn" data-target="exp3">Read more ↓</button>
+                <div class="exp-content" id="exp3">
+                  <ul>
+                    <li>Managed YRC FTU fanpage (40,000+ followers): grew over 1,000 followers in 10 months.</li>
+                    <li>Created and designed social media content: maintained 100+ avg engagements per post.</li>
+                    <li>Developed monthly communication plans for consistent strategic content direction.</li>
+                    <li>Supported organization of club events (panel discussions, talkshows) with 200–400 attendees.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-skills">
+      <div class="section">
+        <div class="container fade-on-enter">
+          <h2 class="section-heading">My Toolkit</h2>
+          <div class="skills-grid">
+            <div>
+              <p class="label" style="color:var(--green-deep)">Technical Skills</p>
+              <div class="skill-item"><div class="skill-label"><span>Content Creation (Writing, Visual, Video)</span><span>90%</span></div><div class="bar"><div class="fill" data-width="90%"></div></div></div>
+              <div class="skill-item"><div class="skill-label"><span>Social Media Management</span><span>88%</span></div><div class="bar"><div class="fill" data-width="88%"></div></div></div>
+              <div class="skill-item"><div class="skill-label"><span>SEO Writing</span><span>80%</span></div><div class="bar"><div class="fill" data-width="80%"></div></div></div>
+              <div class="skill-item"><div class="skill-label"><span>Canva / CapCut</span><span>85%</span></div><div class="bar"><div class="fill" data-width="85%"></div></div></div>
+              <div class="skill-item"><div class="skill-label"><span>Adobe Photoshop / Illustrator</span><span>70%</span></div><div class="bar"><div class="fill" data-width="70%"></div></div></div>
+              <div class="skill-item"><div class="skill-label"><span>Microsoft Office Suite</span><span>78%</span></div><div class="bar"><div class="fill" data-width="78%"></div></div></div>
+            </div>
+            <div>
+              <p class="label" style="color:var(--green-deep)">Interpersonal Skills</p>
+              <div class="soft-cloud">
+                <span class="soft-pill">Creative Thinking</span><span class="soft-pill">Storytelling</span><span class="soft-pill">Problem Solving</span><span class="soft-pill">Team Collaboration</span><span class="soft-pill">Event Planning</span><span class="soft-pill">Leadership</span><span class="soft-pill">Time Management</span><span class="soft-pill">Communication</span><span class="soft-pill">English Proficiency</span><span class="soft-pill">Relationship Building</span><span class="soft-pill">Strategic Planning</span>
+              </div>
+            </div>
+          </div>
+          <div class="tools-row">
+            <article class="tool-card glass">📷 Photoshop</article><article class="tool-card glass">🎨 Illustrator</article><article class="tool-card glass">✂️ CapCut</article><article class="tool-card glass">🖌️ Canva</article><article class="tool-card glass">📊 Excel</article><article class="tool-card glass">📝 Word</article><article class="tool-card glass">🎬 TikTok</article><article class="tool-card glass">📱 Meta Ads</article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-achievements">
+      <div class="section">
+        <div class="container center fade-on-enter">
+          <h2 class="section-heading" style="font-style:italic">Milestones</h2>
+          <div class="achievements-grid">
+            <article class="achievement-card glass" style="--ad:.1s"><div class="achievement-mark">🥉</div><h3>3rd Prize</h3><p>University-level Scientific Research Competition<br>Truong Dai hoc Ngoai thuong</p></article>
+            <article class="achievement-card glass" style="--ad:.2s"><div class="achievement-mark">🥈</div><h3>2nd Prize</h3><p>Faculty-level Scientific Research Competition<br>Khoa Quan tri Kinh doanh</p></article>
+            <article class="achievement-card glass" style="--ad:.3s"><div class="achievement-mark">📰</div><h3>Published Author</h3><p>Co-author — Journal of Asian Business & Economic Studies (JABES)<br>International peer-reviewed journal</p></article>
+            <article class="achievement-card glass" style="--ad:.4s"><div class="achievement-mark">🌐</div><h3>International Conference</h3><p>Co-author — ICYREB 2025<br>Accepted research paper presentation</p></article>
+          </div>
+          <div class="milestone-strip" id="milestone-strip">
+            <div class="milestone-progress"></div>
+            <div class="ms-point" style="left:0%"><span></span>2022</div><div class="ms-point" style="left:25%"><span></span>2023</div><div class="ms-point" style="left:50%"><span></span>2024</div><div class="ms-point" style="left:75%"><span></span>2025</div><div class="ms-point" style="left:100%"><span></span>2026</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-goals">
+      <div class="section">
+        <div class="container goals-grid fade-on-enter">
+          <div class="goals-content">
+            <div class="watermark-ua">UA</div>
+            <p class="label" style="color:var(--green-deep)">— WHERE I'M HEADING</p>
+            <h2 class="section-heading">Career Ambitions</h2>
+            <div class="goal-stack">
+              <article class="goal-card glass">
+                <h3>🎯 Year 1 · Learn & Execute UA Marketing</h3>
+                <p>Join a UA team to directly participate in User Acquisition for mobile games. Focus on analyzing user data, optimizing ad creatives, and running performance campaigns across multiple channels.</p>
+                <div class="goal-tags"><span class="goal-tag">Mobile Gaming</span><span class="goal-tag">User Acquisition</span><span class="goal-tag">Data Analysis</span></div>
+              </article>
+              <article class="goal-card glass">
+                <h3>🚀 2–3 Years · UA Marketing Executive</h3>
+                <p>Grow into a strategic role: planning UA campaigns, optimizing ad budgets, collaborating with creative teams to scale player acquisition for international game titles.</p>
+                <div class="goal-tags"><span class="goal-tag">Strategy</span><span class="goal-tag">Budget Optimization</span><span class="goal-tag">Global Products</span></div>
+              </article>
+            </div>
+          </div>
+          <div class="rocket-wrap">
+            <svg class="rocket-svg" viewBox="0 0 280 320" role="img" aria-label="Decorative growth rocket illustration">
+              <defs><linearGradient id="g1" x1="0%" x2="100%"><stop offset="0%" stop-color="#F2B8C2"></stop><stop offset="100%" stop-color="#7BBFDA"></stop></linearGradient></defs>
+              <polyline points="20,280 80,230 130,250 190,190 250,210" fill="none" stroke="#7BBFDA" stroke-width="4" stroke-linecap="round"></polyline>
+              <circle cx="20" cy="280" r="6" fill="#E8839A"></circle><circle cx="80" cy="230" r="6" fill="#E8839A"></circle><circle cx="130" cy="250" r="6" fill="#E8839A"></circle><circle cx="190" cy="190" r="6" fill="#E8839A"></circle>
+              <g transform="translate(170 70) rotate(18)">
+                <rect x="20" y="40" width="40" height="110" rx="20" fill="url(#g1)"></rect>
+                <polygon points="40,5 16,42 64,42" fill="#FAD9E0"></polygon>
+                <polygon points="22,136 10,165 30,154" fill="#D4A853"></polygon>
+                <polygon points="58,136 70,165 50,154" fill="#D4A853"></polygon>
+                <circle cx="40" cy="78" r="12" fill="#FFFFFF" opacity="0.9"></circle>
+              </g>
+            </svg>
+            <span class="orbit o1"></span><span class="orbit o2"></span><span class="orbit o3"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page contact-page" id="page-contact">
+      <div class="section">
+        <div class="container center fade-on-enter">
+          <h2 class="section-heading" style="font-style:italic">Let's Connect</h2>
+          <p class="label">Open to UA Marketing opportunities · Hanoi, Vietnam</p>
+          <div class="contact-grid">
+            <a class="contact-card glass" href="tel:+84825485716"><span class="contact-ico">📞</span>0825 485 716</a>
+            <a class="contact-card glass" href="mailto:khanhnm634@gmail.com"><span class="contact-ico">✉️</span>khanhnm634@gmail.com</a>
+            <a class="contact-card glass" href="https://linkedin.com/in/khanh-minh/" target="_blank" rel="noreferrer"><span class="contact-ico">💼</span>linkedin.com/in/khanh-minh/</a>
+            <article class="contact-card glass"><span class="contact-ico">📍</span>Hoang Mai, Hanoi</article>
+          </div>
+          <div class="availability"><span class="pulse-dot"></span>Available for Internship / Full-time Opportunities</div>
+          <p>Feel free to reach out — I'd love to chat about marketing, content strategy, or anything creative.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>© 2026 Nguyen Minh Khanh</footer>
+
+  <script>
+    const nav = document.getElementById("site-nav");
+    const navLinks = Array.from(document.querySelectorAll(".nav-link[data-page], .mobile-link[data-page]"));
+    const routeButtons = Array.from(document.querySelectorAll(".route-btn"));
+    const mobileMenu = document.getElementById("mobile-menu");
+    const hamburger = document.getElementById("hamburger");
+    let activePage = document.querySelector(".page.active");
+
+    function setActiveNav(pageName) {
+      document.querySelectorAll(".nav-link[data-page]").forEach((link) => {
+        if (link.dataset.page === pageName) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+    }
+
+    function runPageAnimations(pageName) {
+      const page = document.getElementById("page-" + pageName);
+      if (!page) return;
+      page.querySelectorAll(".fade-on-enter").forEach((el, idx) => {
+        el.classList.remove("in");
+        el.style.animationDelay = (idx * 0.06) + "s";
+        requestAnimationFrame(() => el.classList.add("in"));
+      });
+      if (pageName === "skills") {
+        page.querySelectorAll(".fill").forEach((fill) => {
+          fill.style.width = "0";
+          requestAnimationFrame(() => { fill.style.width = fill.dataset.width || "0%"; });
+        });
+      }
+      if (pageName === "achievements") {
+        const strip = document.getElementById("milestone-strip");
+        if (strip) { strip.classList.remove("run"); requestAnimationFrame(() => strip.classList.add("run")); }
+      }
+      if (pageName === "experience") {
+        page.querySelectorAll(".dot").forEach((dot) => {
+          dot.style.animation = "none";
+          requestAnimationFrame(() => { dot.style.animation = "dotPop 600ms cubic-bezier(0.18, 1.35, 0.4, 1) forwards"; });
+        });
+      }
+    }
+
+    function showPage(pageName, updateHash = true) {
+      const next = document.getElementById("page-" + pageName);
+      if (!next) return;
+      if (activePage === next) {
+        if (updateHash && window.location.hash !== "#" + pageName) window.location.hash = "#" + pageName;
+        return;
+      }
+      const previous = activePage || document.querySelector(".page.active");
+      if (previous) {
+        if (previous === next) {
+          activePage = next;
+          setActiveNav(pageName);
+          runPageAnimations(pageName);
+          return;
+        }
+        previous.classList.remove("entering");
+        previous.classList.add("exiting");
+        setTimeout(() => previous.classList.remove("active", "exiting"), 150);
+      }
+      next.classList.add("active");
+      next.classList.remove("exiting");
+      requestAnimationFrame(() => next.classList.add("entering"));
+      setTimeout(() => next.classList.remove("entering"), 220);
+      activePage = next;
+      setActiveNav(pageName);
+      runPageAnimations(pageName);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (updateHash && window.location.hash !== "#" + pageName) window.location.hash = "#" + pageName;
+    }
+
+    function routeFromHash() {
+      const hash = window.location.hash.replace("#", "") || "home";
+      const valid = ["home", "about", "experience", "skills", "achievements", "goals", "contact"];
+      showPage(valid.includes(hash) ? hash : "home", false);
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        showPage(link.dataset.page);
+        mobileMenu.classList.remove("open");
+        mobileMenu.setAttribute("aria-hidden", "true");
+        hamburger.setAttribute("aria-expanded", "false");
+      });
+    });
+    routeButtons.forEach((btn) => btn.addEventListener("click", () => showPage(btn.dataset.page)));
+    hamburger.addEventListener("click", () => {
+      const open = mobileMenu.classList.toggle("open");
+      mobileMenu.setAttribute("aria-hidden", open ? "false" : "true");
+      hamburger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.querySelectorAll(".toggle-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = document.getElementById(button.dataset.target);
+        if (!target) return;
+        const isOpen = target.classList.toggle("open");
+        button.textContent = isOpen ? "Collapse ↑" : "Read more ↓";
+      });
+    });
+    window.addEventListener("hashchange", routeFromHash);
+    window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 10));
+
+    const dot = document.querySelector(".cursor-dot");
+    const ring = document.querySelector(".cursor-ring");
+    if (dot && ring && window.matchMedia("(pointer:fine)").matches) {
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      window.addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; dot.style.left = mx + "px"; dot.style.top = my + "px"; });
+      function cursorLoop() {
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        ring.style.left = rx + "px";
+        ring.style.top = ry + "px";
+        requestAnimationFrame(cursorLoop);
+      }
+      cursorLoop();
+      document.querySelectorAll("a, button, .glass").forEach((el) => {
+        el.addEventListener("mouseenter", () => { ring.style.width = "42px"; ring.style.height = "42px"; ring.style.borderColor = "rgba(123, 191, 218, .65)"; });
+        el.addEventListener("mouseleave", () => { ring.style.width = "30px"; ring.style.height = "30px"; ring.style.borderColor = "rgba(232, 131, 154, .4)"; });
+      });
+    }
+    routeFromHash();
+  </script>
+</body>
+</html>
