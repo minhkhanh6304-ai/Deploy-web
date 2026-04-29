@@ -98,7 +98,7 @@
     main { padding-top: 74px; }
 
     .page { display: none; opacity: 0; transform: translateY(10px); }
-    .page.active { display: block; }
+    .page.active { display: block; opacity: 1; transform: translateY(0); }
     .page.entering { animation: pageIn 200ms ease-in forwards; }
     .page.exiting { animation: pageOut 150ms ease-out forwards; }
     .display-heading { font-size: clamp(3rem, 8vw, 5rem); font-style: italic; color: var(--charcoal); }
@@ -524,7 +524,7 @@
     const routeButtons = Array.from(document.querySelectorAll(".route-btn"));
     const mobileMenu = document.getElementById("mobile-menu");
     const hamburger = document.getElementById("hamburger");
-    let activePage = document.querySelector(".page.active");
+    let activePage = null;
 
     function setActiveNav(pageName) {
       document.querySelectorAll(".nav-link[data-page]").forEach((link) => {
@@ -567,13 +567,7 @@
         return;
       }
       const previous = activePage || document.querySelector(".page.active");
-      if (previous) {
-        if (previous === next) {
-          activePage = next;
-          setActiveNav(pageName);
-          runPageAnimations(pageName);
-          return;
-        }
+      if (previous && previous !== next) {
         previous.classList.remove("entering");
         previous.classList.add("exiting");
         setTimeout(() => previous.classList.remove("active", "exiting"), 150);
@@ -585,7 +579,7 @@
       activePage = next;
       setActiveNav(pageName);
       runPageAnimations(pageName);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
       if (updateHash && window.location.hash !== "#" + pageName) window.location.hash = "#" + pageName;
     }
 
